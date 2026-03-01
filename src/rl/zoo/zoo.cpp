@@ -84,12 +84,8 @@
 #include "flag/ppo_gru.h"
 #include "acrobot-swingup-v0/sac.h"
 #include "bottleneck-v0/ppo.h"
-#ifdef RL_TOOLS_EXPERIMENTAL
 #include "l2f/sac_tiny.h"
-// #include "l2f/sac_big.h"
-#else
-#include "l2f/sac_tiny.h"
-#endif
+#include "l2f/sac_big.h"
 #include "l2f/td3.h"
 #include "l2f/ppo.h"
 #ifdef RL_TOOLS_RL_ZOO_ENVIRONMENT_ANT_V4
@@ -175,7 +171,11 @@ using LOOP_CORE_CONFIG = rlt::rl::zoo::acrobot_swingup_v0::sac::FACTORY<DEVICE, 
 template <typename BASE>
 using LOOP_EVALUATION_PARAMETER_OVERWRITES = rlt::rl::zoo::acrobot_swingup_v0::sac::FACTORY<DEVICE, TYPE_POLICY, TI, RNG, DYNAMIC_ALLOCATION>::LOOP_EVALUATION_PARAMETER_OVERWRITES<BASE>;
 #elif defined(RL_TOOLS_RL_ZOO_ENVIRONMENT_L2F)
-using LOOP_CORE_CONFIG = rlt::rl::zoo::l2f::sac::FACTORY<DEVICE, TYPE_POLICY, TI, RNG, DYNAMIC_ALLOCATION>::LOOP_CORE_CONFIG;
+#if defined(RL_TOOLS_RL_ZOO_ENVIRONMENT_L2F_BIG)
+using LOOP_CORE_CONFIG = rlt::rl::zoo::l2f::sac::FACTORY_BIG<DEVICE, TYPE_POLICY, TI, RNG, DYNAMIC_ALLOCATION>::LOOP_CORE_CONFIG;
+#else
+using LOOP_CORE_CONFIG = rlt::rl::zoo::l2f::sac::FACTORY_TINY<DEVICE, TYPE_POLICY, TI, RNG, DYNAMIC_ALLOCATION>::LOOP_CORE_CONFIG;
+#endif
 template <typename BASE>
 struct LOOP_EVALUATION_PARAMETER_OVERWRITES: BASE{};
 #else
@@ -296,7 +296,13 @@ using LOOP_CONFIG = LOOP_NN_ANALYTICS_CONFIG;
 #endif
 
 #if defined(RL_TOOLS_RL_ZOO_ALGORITHM_SAC)
+#if !defined(RL_TOOLS_RL_ZOO_ENVIRONMENT_L2F)
 std::string algorithm = "sac";
+#elif defined(RL_TOOLS_RL_ZOO_ENVIRONMENT_L2F_BIG)
+std::string algorithm = "sac-big";
+#else
+std::string algorithm = "sac-tiny";
+#endif
 #elif defined(RL_TOOLS_RL_ZOO_ALGORITHM_TD3)
 std::string algorithm = "td3";
 #elif defined(RL_TOOLS_RL_ZOO_ALGORITHM_PPO)
@@ -455,20 +461,20 @@ int zoo(int initial_seed, int num_seeds, std::string extrack_base_path, std::str
             FrameMark;
 #endif
 
-// #if defined(RL_TOOLS_RL_ZOO_ENVIRONMENT_L2F) && defined(RL_TOOLS_RL_ZOO_ALGORITHM_SAC)
-//             // hacked L2F curriculum
-//             TI previous_step = ts.step-1;
-//             TI evaluation_index = previous_step / LOOP_CONFIG::EVALUATION_PARAMETERS::EVALUATION_INTERVAL;
-//             bool evaluate_scheduled = previous_step % LOOP_CONFIG::EVALUATION_PARAMETERS::EVALUATION_INTERVAL == 0 && evaluation_index < LOOP_CONFIG::EVALUATION_PARAMETERS::N_EVALUATIONS;
-//             if (evaluate_scheduled){
-//                 auto& results = rlt::get(ts.evaluation_results, 0, evaluation_index);
-//                 T share_terminated = results.share_terminated;
-//                 if (share_terminated < 0.1) {
-//                     difficulty = rlt::math::min(device.math, difficulty + (T)0.1, (T)1);
-//                     update_parameters(difficulty);
-//                 }
-//             }
-// #endif
+#if defined(RL_TOOLS_RL_ZOO_ENVIRONMENT_L2F) && defined(RL_TOOLS_RL_ZOO_ENVIRONMENT_L2F_BIG) && defined(RL_TOOLS_RL_ZOO_ALGORITHM_SAC)
+            // hacked L2F curriculum
+            TI previous_step = ts.step-1;
+            TI evaluation_index = previous_step / LOOP_CONFIG::EVALUATION_PARAMETERS::EVALUATION_INTERVAL;
+            bool evaluate_scheduled = previous_step % LOOP_CONFIG::EVALUATION_PARAMETERS::EVALUATION_INTERVAL == 0 && evaluation_index < LOOP_CONFIG::EVALUATION_PARAMETERS::N_EVALUATIONS;
+            if (evaluate_scheduled){
+                auto& results = rlt::get(ts.evaluation_results, 0, evaluation_index);
+                T share_terminated = results.share_terminated;
+                if (share_terminated < 0.1) {
+                    difficulty = rlt::math::min(device.math, difficulty + (T)0.1, (T)1);
+                    update_parameters(difficulty);
+                }
+            }
+#endif
 #ifndef RL_TOOLS_RL_ZOO_BENCHMARK
             if(signal_flag){
                 ts.evaluate_this_step = true;

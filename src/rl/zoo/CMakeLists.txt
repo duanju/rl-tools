@@ -123,15 +123,20 @@ target_compile_definitions(rl_zoo_acrobot_swingup_v0_sac PRIVATE RL_TOOLS_RL_ZOO
 target_compile_definitions(rl_zoo_acrobot_swingup_v0_sac PRIVATE RL_TOOLS_RL_ZOO_ENVIRONMENT_ACROBOT_SWINGUP_V0)
 
 # Learning to Fly
-# SAC
-add_executable(rl_zoo_l2f_sac zoo_cli.cpp zoo.cpp)
-target_link_libraries(rl_zoo_l2f_sac PRIVATE RLtools::RLtools)
-RL_TOOLS_RL_ZOO_LINK_CLI11_OR_NOT(rl_zoo_l2f_sac)
-target_compile_definitions(rl_zoo_l2f_sac PRIVATE RL_TOOLS_RL_ZOO_ALGORITHM_SAC)
-target_compile_definitions(rl_zoo_l2f_sac PRIVATE RL_TOOLS_RL_ZOO_ENVIRONMENT_L2F)
-if(NOT WIN32)
-target_compile_options(rl_zoo_l2f_sac PRIVATE -ftemplate-backtrace-limit=0)
-endif()
+# SAC TINY
+add_executable(rl_zoo_l2f_sac_tiny zoo_cli.cpp zoo.cpp)
+target_link_libraries(rl_zoo_l2f_sac_tiny PRIVATE RLtools::RLtools)
+RL_TOOLS_RL_ZOO_LINK_CLI11_OR_NOT(rl_zoo_l2f_sac_tiny)
+target_compile_definitions(rl_zoo_l2f_sac_tiny PRIVATE RL_TOOLS_RL_ZOO_ALGORITHM_SAC)
+target_compile_definitions(rl_zoo_l2f_sac_tiny PRIVATE RL_TOOLS_RL_ZOO_ENVIRONMENT_L2F)
+
+# SAC BIG
+add_executable(rl_zoo_l2f_sac_big zoo_cli.cpp zoo.cpp)
+target_link_libraries(rl_zoo_l2f_sac_big PRIVATE RLtools::RLtools)
+RL_TOOLS_RL_ZOO_LINK_CLI11_OR_NOT(rl_zoo_l2f_sac_big)
+target_compile_definitions(rl_zoo_l2f_sac_big PRIVATE RL_TOOLS_RL_ZOO_ALGORITHM_SAC)
+target_compile_definitions(rl_zoo_l2f_sac_big PRIVATE RL_TOOLS_RL_ZOO_ENVIRONMENT_L2F)
+target_compile_definitions(rl_zoo_l2f_sac_big PRIVATE RL_TOOLS_RL_ZOO_ENVIRONMENT_L2F_BIG)
 # SAC BENCHMARK
 add_executable(rl_zoo_l2f_sac_benchmark zoo_cli.cpp zoo.cpp)
 target_link_libraries(rl_zoo_l2f_sac_benchmark PRIVATE RLtools::RLtools)

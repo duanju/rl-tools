@@ -6,16 +6,9 @@
 
 namespace rl_tools::rl::zoo::l2f::sac{
     template <typename DEVICE, typename TYPE_POLICY, typename TI, typename RNG, bool DYNAMIC_ALLOCATION=true>
-    struct FACTORY{
+    struct FACTORY_BIG{
         using T = typename TYPE_POLICY::DEFAULT;
-        struct OPTIONS{
-            static constexpr bool SEQUENTIAL_MODEL = false;
-            static constexpr bool MOTOR_DELAY = true;
-            static constexpr bool RANDOMIZE_MOTOR_MAPPING = false;
-            static constexpr bool RANDOMIZE_THRUST_CURVES = false;
-            static constexpr bool OBSERVE_THRASH_MARKOV = false;
-        };
-        using ENVIRONMENT = typename ENVIRONMENT_BIG_FACTORY<DEVICE, TYPE_POLICY, TI, OPTIONS>::ENVIRONMENT;
+        using ENVIRONMENT = typename ENVIRONMENT_BIG_FACTORY<DEVICE, TYPE_POLICY, TI>::ENVIRONMENT;
 
         struct LOOP_CORE_PARAMETERS: rl::algorithms::sac::loop::core::DefaultParameters<TYPE_POLICY, TI, ENVIRONMENT>{
             struct SAC_PARAMETERS: rl::algorithms::sac::DefaultParameters<TYPE_POLICY, TI>{
@@ -72,9 +65,6 @@ namespace rl_tools::rl::zoo::l2f::sac{
         };
         // this config is competitive with mlp but 15x slower
 
-        using LOOP_CORE_CONFIG = rl_tools::utils::typing::conditional_t<OPTIONS::SEQUENTIAL_MODEL,
-            rl::algorithms::sac::loop::core::Config<TYPE_POLICY, TI, RNG, ENVIRONMENT, LOOP_CORE_PARAMETERS, rl::algorithms::sac::loop::core::ConfigApproximatorsGRU, DYNAMIC_ALLOCATION>,
-            rl::algorithms::sac::loop::core::Config<TYPE_POLICY, TI, RNG, ENVIRONMENT, LOOP_CORE_PARAMETERS, rl::algorithms::sac::loop::core::ConfigApproximatorsMLP, DYNAMIC_ALLOCATION>
-        >;
+        using LOOP_CORE_CONFIG = rl::algorithms::sac::loop::core::Config<TYPE_POLICY, TI, RNG, ENVIRONMENT, LOOP_CORE_PARAMETERS, rl::algorithms::sac::loop::core::ConfigApproximatorsMLP, DYNAMIC_ALLOCATION>;
     };
 }

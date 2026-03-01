@@ -13,7 +13,7 @@
 namespace rl_tools::rl::zoo::l2f::sac{
     namespace rlt = rl_tools;
     template <typename DEVICE, typename TYPE_POLICY, typename TI, typename RNG, bool DYNAMIC_ALLOCATION=true>
-    struct FACTORY{
+    struct FACTORY_TINY{
         using ENVIRONMENT = typename ENVIRONMENT_TINY_FACTORY<DEVICE, TYPE_POLICY, TI>::ENVIRONMENT;
         struct LOOP_CORE_PARAMETERS: rlt::rl::algorithms::sac::loop::core::DefaultParameters<TYPE_POLICY, TI, ENVIRONMENT>{
             struct SAC_PARAMETERS: rlt::rl::algorithms::sac::DefaultParameters<TYPE_POLICY, TI>{

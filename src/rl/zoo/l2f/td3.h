@@ -9,7 +9,7 @@ namespace rl_tools::rl::zoo::l2f::td3{
     template <typename DEVICE, typename TYPE_POLICY, typename TI, typename RNG, bool DYNAMIC_ALLOCATION>
     struct FACTORY{
         using T = typename TYPE_POLICY::DEFAULT;
-        using ENVIRONMENT = typename ENVIRONMENT_TINY_FACTORY<DEVICE, TYPE_POLICY, TI>::ENVIRONMENT;
+        using ENVIRONMENT = typename ENVIRONMENT_BIG_FACTORY<DEVICE, TYPE_POLICY, TI>::ENVIRONMENT;
         struct LOOP_CORE_PARAMETERS: rlt::rl::algorithms::td3::loop::core::DefaultParameters<TYPE_POLICY, TI, ENVIRONMENT>{
             struct TD3_PARAMETERS: rlt::rl::algorithms::td3::DefaultParameters<TYPE_POLICY, TI>{
                 static constexpr TI ACTOR_BATCH_SIZE = 256;

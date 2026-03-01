@@ -20,7 +20,7 @@ namespace rl_tools::rl::zoo::l2f::ppo{
             static constexpr bool RANDOMIZE_THRUST_CURVES = false;
             static constexpr bool OBSERVE_THRASH_MARKOV = false;
         };
-        using ENVIRONMENT = typename ENVIRONMENT_BIG_FACTORY<DEVICE, TYPE_POLICY, TI, OPTIONS>::ENVIRONMENT;
+        using ENVIRONMENT = typename ENVIRONMENT_BIG_FACTORY<DEVICE, TYPE_POLICY, TI>::ENVIRONMENT;
 
         struct LOOP_CORE_PARAMETERS: rlt::rl::algorithms::ppo::loop::core::DefaultParameters<TYPE_POLICY, TI, ENVIRONMENT>{
             static constexpr TI STEP_LIMIT = 60000; // ~2.5M env steps
